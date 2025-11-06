@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,12 +21,14 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Time {
-
+public class Time {    
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "{time.nome.notblank}")
+    @Size(min = 2, max = 100, message = "{time.nome.size}")
     private String nome;    
     
     @OneToMany(mappedBy = "time", cascade = CascadeType.ALL, orphanRemoval = true)
