@@ -7,7 +7,9 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
+import com.example.generenciadorjogadores.dto.TimeResponse;
 import com.example.generenciadorjogadores.model.Time;
 import com.example.generenciadorjogadores.model.TimeFilters;
 import com.example.generenciadorjogadores.service.TimeService;
@@ -20,27 +22,28 @@ public class TimeController {
 
     public TimeController(TimeService timeService){
         this.timeService = timeService;
-    }
-
+    }    
+    
     @GetMapping
-    public PagedModel<EntityModel<Time>> getAll(TimeFilters filters, @PageableDefault(size = 10, sort = "nome") Pageable pageable, PagedResourcesAssembler<Time> assembler) {
+    public PagedModel<EntityModel<TimeResponse>> getAll(TimeFilters filters, @PageableDefault(size = 10, sort = "nome") Pageable pageable, PagedResourcesAssembler<Time> assembler) {
         var page = timeService.listarTimes(pageable, filters);
-        return assembler.toModel(page, Time::toEntityModel);
-    }
-
+        return assembler.toModel(page, TimeResponse::toEntityModel);
+    }    
+    
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Time criarTime(@RequestBody Time time) {
-        return timeService.criarTime(time);
+    public TimeResponse criarTime(@Valid @RequestBody Time time) {
+        var timeCreated = timeService.criarTime(time);
+        return TimeResponse.fromModel(timeCreated);
     }
 
     @GetMapping("/{id}")
-    public Time buscarTimePorId(@PathVariable Long id) {
-        return timeService.findTimeById(id);
+    public EntityModel<TimeResponse> buscarTimePorId(@PathVariable Long id) {
+        var time = timeService.findTimeById(id);
+        return TimeResponse.toEntityModel(time);
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletarTime(@PathVariable Long id) {
         timeService.deletarTime(id);
     }

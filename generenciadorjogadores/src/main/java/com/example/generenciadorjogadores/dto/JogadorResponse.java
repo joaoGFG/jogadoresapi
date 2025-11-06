@@ -17,6 +17,16 @@ public record JogadorResponse(Long id, String nome, int idade, String posicao, S
                 jogador.getPosicao(),
                 jogador.getTime() != null ? jogador.getTime().getNome() : null
         );
+    }    
+    
+    public static JogadorResponse fromModelWithoutTime(Jogador jogador) {
+        return new JogadorResponse(
+                jogador.getId(),
+                jogador.getNome(),
+                jogador.getIdade(),
+                jogador.getPosicao(),
+                jogador.getTime() != null ? jogador.getTime().getNome() : null
+        );
     }
 
     public static EntityModel<JogadorResponse> toEntityModel(Jogador jogador) {

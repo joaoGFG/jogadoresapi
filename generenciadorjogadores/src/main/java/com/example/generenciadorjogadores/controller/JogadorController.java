@@ -8,6 +8,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import com.example.generenciadorjogadores.dto.JogadorResponse;
 import com.example.generenciadorjogadores.model.Jogador;
@@ -25,18 +26,15 @@ public class JogadorController {
     }
 
     @GetMapping
-    public PagedModel<EntityModel<JogadorResponse>> getAll(
-            JogadorFilters filters,
-            @PageableDefault(size = 10, sort = "nome") Pageable pageable,
-            PagedResourcesAssembler<Jogador> assembler
+    public PagedModel<EntityModel<JogadorResponse>> getAll(JogadorFilters filters, @PageableDefault(size = 10, sort = "nome") Pageable pageable, PagedResourcesAssembler<Jogador> assembler
     ) {
         var page = jogadorService.listarJogadores(pageable, filters);
         return assembler.toModel(page, JogadorResponse::toEntityModel);
-    }
-
+    }    
+    
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public JogadorResponse criarJogador(@RequestBody Jogador jogador) {
+    public JogadorResponse criarJogador(@Valid @RequestBody Jogador jogador) {
         var novo = jogadorService.criarJogador(jogador);
         return JogadorResponse.fromModel(novo);
     }
@@ -48,7 +46,6 @@ public class JogadorController {
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletarJogador(@PathVariable Long id) {
         jogadorService.deletarJogador(id);
     }
